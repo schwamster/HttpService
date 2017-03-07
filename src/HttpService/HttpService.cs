@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using System.Net.Http;
+using Microsoft.AspNetCore.Authentication;
 
 namespace HttpService
 {
@@ -25,7 +26,7 @@ public class HttpService : IHttpService
                 if (passToken)
                 {
                     var token = await this._accessor.HttpContext.Authentication.GetTokenAsync("access_token");
-                    client.SetBearerToken(token);
+                    client.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", $"Beare {token}");
                 }
 
                 var response = await client.GetAsync(requestUri);
