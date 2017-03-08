@@ -1,5 +1,8 @@
 # HttpService
 
+[![CircleCI](https://circleci.com/gh/schwamster/HttpService.svg?style=shield&circle-token)](https://circleci.com/gh/schwamster/HttpService)
+![#](https://img.shields.io/nuget/v/HttpService.svg)
+
 HttpService for asp.net core that can be used to automatically forward a CorrelationId and pass the incoming access token through to the next service
 
 ## Getting started
