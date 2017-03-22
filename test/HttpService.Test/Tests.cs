@@ -6,6 +6,8 @@ using Xunit;
 using Microsoft.AspNetCore.TestHost;
 using HttpService;
 using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Http;
 
 namespace HttpService.Tests
 {
@@ -15,13 +17,30 @@ namespace HttpService.Tests
         public async void GetAsyncTest()
         {
             //Arrange
-            var httpService = new HttpService(null);
+            var builder = new WebHostBuilder()
+                .ConfigureServices(services =>
+                {
+                    services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+                    services.AddSingleton<IHttpService, HttpService>();
+                }
+                )
+                .Configure(app =>
+                {
+                    app.UseMiddleware<FakeMiddleware>(TimeSpan.FromMilliseconds(20));
+                });
+
+            var server = new TestServer(builder);
+            var client = server.CreateClient();
+
 
             //Act 
-            //do something
+            var requestMessage = new HttpRequestMessage(new HttpMethod("GET"), "/delay/");
+            var responseMessage = await client.SendAsync(requestMessage);
 
             //Assert
-            true.Should().Be(true);
+            //TODO: this test provides absolutely no value as of yet
         }
+
+
     }
 }
