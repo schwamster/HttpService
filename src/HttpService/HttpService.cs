@@ -26,7 +26,7 @@ public class HttpService : IHttpService
                 if (passToken)
                 {
                     var token = await this._accessor.HttpContext.Authentication.GetTokenAsync("access_token");
-                    client.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", $"Beare {token}");
+                    client.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", $"Bearer {token}");
                 }
 
                 var response = await client.GetAsync(requestUri);
