@@ -9,30 +9,82 @@ using Microsoft.AspNetCore.Authentication;
 namespace HttpService
 {
 
-public class HttpService : IHttpService
+    public class HttpService : IHttpService
     {
-        private readonly IHttpContextAccessor _accessor;
+        private readonly IContextReader _tokenExtractor;
 
         public HttpService(IHttpContextAccessor accessor)
         {
-            _accessor = accessor;
+            this._tokenExtractor = new HttpContextReader(accessor);
+        }
+
+        public HttpService(IContextReader tokenExtractor)
+        {
+            _tokenExtractor = tokenExtractor;
         }
 
         public async Task<HttpResponseMessage> GetAsync(string requestUri, bool passToken = false)
         {
             using (var client = new HttpClient())
             {
-                client.DefaultRequestHeaders.TryAddWithoutValidation("X-Correlation-Id", this._accessor.HttpContext.TraceIdentifier);
-                if (passToken)
-                {
-                    var token = await this._accessor.HttpContext.Authentication.GetTokenAsync("access_token");
-                    client.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", $"Bearer {token}");
-                }
+                await EnhanceClientAsync(client, passToken);
 
                 var response = await client.GetAsync(requestUri);
 
                 return response;
             }
+        }
+
+        public async Task<HttpResponseMessage> PostAsync(string requestUri, HttpContent content, bool passToken = false)
+        {
+            using (var client = new HttpClient())
+            {
+                await EnhanceClientAsync(client, passToken);
+
+                var response = await client.PostAsync(requestUri, content);
+
+                return response;
+            }
+        }
+
+        internal async Task EnhanceClientAsync(HttpClient client, bool passToken)
+        {
+            client.DefaultRequestHeaders.TryAddWithoutValidation("X-Correlation-Id", this._tokenExtractor.GetCorrelationId());
+            if (passToken)
+            {
+                var token = await _tokenExtractor.GetTokenAsync();
+                if(!string.IsNullOrEmpty(token))
+                {
+                    client.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", $"Bearer {token}");
+                }
+            }
+        }
+    }
+
+
+    public interface IContextReader
+    {
+        Task<string> GetTokenAsync();
+        string GetCorrelationId();
+    }
+
+    public class HttpContextReader : IContextReader
+    {
+        private readonly IHttpContextAccessor _accessor;
+        public HttpContextReader(IHttpContextAccessor accessor)
+        {
+            this._accessor = accessor;
+        }
+
+        public string GetCorrelationId()
+        {
+            return this._accessor.HttpContext.TraceIdentifier;
+        }
+
+        public async Task<string> GetTokenAsync()
+        {
+            var token = await this._accessor.HttpContext.Authentication.GetTokenAsync("access_token");
+            return token;
         }
     }
 
