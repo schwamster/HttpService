@@ -47,13 +47,37 @@ namespace HttpService
             }
         }
 
+        public async Task<HttpResponseMessage> PutAsync(string requestUri, HttpContent content, bool passToken)
+        {
+            using (var client = new HttpClient())
+            {
+                await EnhanceClientAsync(client, passToken);
+
+                var response = await client.PutAsync(requestUri, content);
+
+                return response;
+            }
+        }
+
+        public async Task<HttpResponseMessage> DeleteAsync(string requestUri, bool passToken)
+        {
+            using (var client = new HttpClient())
+            {
+                await EnhanceClientAsync(client, passToken);
+
+                var response = await client.DeleteAsync(requestUri);
+
+                return response;
+            }
+        }
+
         internal async Task EnhanceClientAsync(HttpClient client, bool passToken)
         {
             client.DefaultRequestHeaders.TryAddWithoutValidation("X-Correlation-Id", this._tokenExtractor.GetCorrelationId());
             if (passToken)
             {
                 var token = await _tokenExtractor.GetTokenAsync();
-                if(!string.IsNullOrEmpty(token))
+                if (!string.IsNullOrEmpty(token))
                 {
                     client.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", $"Bearer {token}");
                 }
