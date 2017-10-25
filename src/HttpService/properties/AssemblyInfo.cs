@@ -1,3 +1,3 @@
 using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo("HttpService.Test")]
+[assembly: InternalsVisibleTo("HttpService.Tests")]

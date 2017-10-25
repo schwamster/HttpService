@@ -1,10 +1,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{ADEEFFEE-CC51-4953-B146-BA0C102DB863}"
-EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "HttpService", "src\HttpService\HttpService.xproj", "{211618DF-334C-4882-A26E-A097C1269DDA}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{28A985D1-A809-42A6-B494-2ADFF642C9AD}"
 	ProjectSection(SolutionItems) = preProject
@@ -13,13 +11,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		build.sh = build.sh
 		circle.yml = circle.yml
 		docker-compose-build.yml = docker-compose-build.yml
-		global.json = global.json
 		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{BF1A6AE5-52CE-4D0B-85B4-F507F00CF41C}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "HttpService.Test", "test\HttpService.Test\HttpService.Test.xproj", "{4D261EA9-28DD-4AD1-9EC0-CE947A7DE32A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HttpService", "src\HttpService\HttpService.csproj", "{211618DF-334C-4882-A26E-A097C1269DDA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HttpService.Tests", "test\HttpService.Tests\HttpService.Tests.csproj", "{C27E0DC0-BF37-4F47-B7AD-C656BB558E83}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,16 +30,19 @@ Global
 		{211618DF-334C-4882-A26E-A097C1269DDA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{211618DF-334C-4882-A26E-A097C1269DDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{211618DF-334C-4882-A26E-A097C1269DDA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4D261EA9-28DD-4AD1-9EC0-CE947A7DE32A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4D261EA9-28DD-4AD1-9EC0-CE947A7DE32A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4D261EA9-28DD-4AD1-9EC0-CE947A7DE32A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4D261EA9-28DD-4AD1-9EC0-CE947A7DE32A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C27E0DC0-BF37-4F47-B7AD-C656BB558E83}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C27E0DC0-BF37-4F47-B7AD-C656BB558E83}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C27E0DC0-BF37-4F47-B7AD-C656BB558E83}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C27E0DC0-BF37-4F47-B7AD-C656BB558E83}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{211618DF-334C-4882-A26E-A097C1269DDA} = {ADEEFFEE-CC51-4953-B146-BA0C102DB863}
-		{4D261EA9-28DD-4AD1-9EC0-CE947A7DE32A} = {BF1A6AE5-52CE-4D0B-85B4-F507F00CF41C}
+		{C27E0DC0-BF37-4F47-B7AD-C656BB558E83} = {BF1A6AE5-52CE-4D0B-85B4-F507F00CF41C}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BF4BC359-1EBF-43B6-A64B-73A0407DE50A}
 	EndGlobalSection
 EndGlobal
