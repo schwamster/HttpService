@@ -5,8 +5,8 @@ RUN mkdir app
 WORKDIR /app
 
 COPY *.sln .
-COPY ./src/HttpService/HttpService.csproj ./src/HttpService/HttpService.csproj
-COPY ./test/HttpService.Tests/HttpService.Tests.csproj ./test/HttpService.Tests/HttpService.Tests.csproj
+COPY ./src/HttpService/HttpService.csproj /app/src/HttpService/HttpService.csproj
+COPY ./test/HttpService.Tests/HttpService.Tests.csproj /app/test/HttpService.Tests/HttpService.Tests.csproj
 
 RUN dotnet restore
 
