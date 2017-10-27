@@ -1,6 +1,7 @@
 FROM microsoft/dotnet:2.0-sdk
 ARG BuildNumber=local
 ENV BuildNumber=${BuildNumber}
+RUN mkdir app
 WORKDIR /app
 
 COPY *.sln .
