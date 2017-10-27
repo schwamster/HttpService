@@ -5,8 +5,6 @@ RUN mkdir app
 WORKDIR /app
 
 COPY *.sln .
-RUN mkdir ./src/HttpService
-RUN mkdir ./scr/HttpService.Tests
 COPY ./src/HttpService/HttpService.csproj ./src/HttpService/HttpService.csproj
 COPY ./test/HttpService.Tests/HttpService.Tests.csproj ./test/HttpService.Tests/HttpService.Tests.csproj
 
