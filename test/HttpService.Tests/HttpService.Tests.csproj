@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentAssertions" Version="4.19.4" />
+    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="2.0.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.5.0-preview-20171025-02" />
+    <PackageReference Include="Moq" Version="4.7.142" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1-rc2-build3844" />
+    <PackageReference Include="xunit" Version="2.3.1-rc2-build3844" />
+    <DotNetCliToolReference Include="dotnet-xunit" Version="2.3.1-rc2-build3844" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\HttpService\HttpService.csproj" />
+  </ItemGroup>
+
+</Project>

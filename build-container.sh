@@ -1,9 +1,8 @@
 #!bin/bash
 set -e
+cd test/HttpService.Tests
 dotnet restore
-dotnet test test/HttpService.Test/project.json -xml $(pwd)/testresults/out.xml
-rm -rf $(pwd)/package
-dotnet pack src/HttpService/project.json -c release -o $(pwd)/package --version-suffix=${BuildNumber}
-mkdir $(pwd)/symbols
-cp $(pwd)/package/*.symbols.nupkg $(pwd)/symbols
-rm $(pwd)/package/*.symbols.nupkg
+dotnet xunit -xml ${pwd}/../../testresults/out.xml
+cd -
+# --version-suffix=${BuildNumber}
+dotnet pack src/HttpService/HttpService.csproj -c release -o ${pwd}/package 

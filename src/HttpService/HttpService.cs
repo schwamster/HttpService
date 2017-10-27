@@ -107,7 +107,7 @@ namespace HttpService
 
         public async Task<string> GetTokenAsync()
         {
-            var token = await this._accessor.HttpContext.Authentication.GetTokenAsync("access_token");
+            var token = await this._accessor.HttpContext.GetTokenAsync("access_token");
             return token;
         }
     }

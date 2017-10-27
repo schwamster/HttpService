@@ -5,7 +5,10 @@ machine:
 dependencies:
   override:
     - docker info
-    - docker-compose -f docker-compose-build.yml up
+    - docker build --build-arg BuildNumber=$CIRCLE_BUILD_NUM -t httpservice-build .
+    - docker create --name httpservice-build httpservice-build
+    - docker cp httpservice-build:/package ./package
+    - docker cp httpservice-build:/testresults/ ./testresults
 
 test:
   override:
@@ -16,4 +19,4 @@ deployment:
   hub:
     branch: master
     commands:
-      - docker run --rm -v ~/HttpService/package:/data/package schwamster/nuget-docker push /data/package/*.nupkg $Nuget_Api_Key -Source nuget.org
+      - docker run --rm -v ~/package:/data/package schwamster/nuget-docker push /data/package/*.nupkg $Nuget_Api_Key -Source nuget.org
