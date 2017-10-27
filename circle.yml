@@ -8,12 +8,13 @@ dependencies:
     - docker build --build-arg BuildNumber=local -t httpservice-build .
     - docker create --name httpservice-build httpservice-build
     - docker cp httpservice-build:/package ./package
+    - docker cp httpservice-build:/testresults/ ./testresults
     - docker rm httpservice-build
 
 test:
   override:
     - mkdir -p $CIRCLE_TEST_REPORTS/junit
-    # - sudo mv testresults/out.xml $CIRCLE_TEST_REPORTS/junit
+    - sudo mv testresults/out.xml $CIRCLE_TEST_REPORTS/junit
     
 deployment:
   hub:
