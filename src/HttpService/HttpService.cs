@@ -36,12 +36,14 @@ namespace HttpService
 		private async Task<HttpResponseMessage> SendAsync(HttpMethod method, string requestUri, bool passToken, HttpContent content = null)
 		{
 			var msg = new HttpRequestMessage(method, requestUri);
+
+			msg.Headers.TryAddWithoutValidation("X-Correlation-Id", this._tokenExtractor.GetCorrelationId());
 			if (passToken)
 			{
 				var token = await _tokenExtractor.GetTokenAsync();
 				if (!string.IsNullOrEmpty(token))
 				{
-					msg.Headers.Add("Authorization", $"Bearer {token}");
+					msg.Headers.TryAddWithoutValidation("Authorization", $"Bearer {token}");
 				}
 			}
 
@@ -54,10 +56,10 @@ namespace HttpService
 		}
 	}
 
-
 	public interface IContextReader
 	{
 		Task<string> GetTokenAsync();
+		string GetCorrelationId();
 	}
 
 	public class HttpContextReader : IContextReader
@@ -68,11 +70,15 @@ namespace HttpService
 			this._accessor = accessor;
 		}
 
+		public string GetCorrelationId()
+		{
+			return this._accessor.HttpContext.TraceIdentifier;
+		}
+
 		public async Task<string> GetTokenAsync()
 		{
 			var token = await this._accessor.HttpContext.GetTokenAsync("access_token");
 			return token;
 		}
 	}
-
 }
