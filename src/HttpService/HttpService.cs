@@ -11,14 +11,14 @@ namespace HttpService
 		private readonly IContextReader _tokenExtractor;
 		private HttpClient _client;
 
-		public HttpService(IHttpContextAccessor accessor) : this(new HttpContextReader(accessor))
+		public HttpService(IHttpContextAccessor accessor, HttpMessageHandler handler = null) : this(new HttpContextReader(accessor), handler)
 		{
 		}
 
-		public HttpService(IContextReader tokenExtractor)
+		public HttpService(IContextReader tokenExtractor, HttpMessageHandler handler = null)
 		{
 			_tokenExtractor = tokenExtractor;
-			_client = new HttpClient();
+			_client = handler == null ? new HttpClient() : new HttpClient(handler);
 		}
 
 		public async Task<HttpResponseMessage> GetAsync(string requestUri, bool passToken) =>
