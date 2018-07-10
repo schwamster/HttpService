@@ -11,15 +11,14 @@ namespace HttpService
 		private readonly IContextReader _tokenExtractor;
 		private HttpClient _client;
 
-		public HttpService(IHttpContextAccessor accessor)
+		public HttpService(IHttpContextAccessor accessor) : this(new HttpContextReader(accessor))
 		{
-			this._tokenExtractor = new HttpContextReader(accessor);
-			_client = new HttpClient();
 		}
 
 		public HttpService(IContextReader tokenExtractor)
 		{
 			_tokenExtractor = tokenExtractor;
+			_client = new HttpClient();
 		}
 
 		public async Task<HttpResponseMessage> GetAsync(string requestUri, bool passToken) =>
