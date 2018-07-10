@@ -9,7 +9,6 @@ namespace HttpService
 	public class HttpService : IHttpService
 	{
 		private readonly IContextReader _tokenExtractor;
-		private HttpClient _tracedClient;
 		private HttpClient _client;
 
 		public HttpService(IHttpContextAccessor accessor)
