@@ -18,11 +18,12 @@ using System.Collections.Generic;
 
 namespace HttpService.Tests
 {
-   public class Tests
+	public class Tests
    {
 
+
         [Fact]
-        public async void EnhanceClientTest_DontPassToken_AddsCorrelationId()
+        public async void CreateMessageTest_DontPassToken_AddsCorrelationId()
         {
             //Arrange
             var httpContext = new Mock<HttpContext>();
@@ -38,19 +39,17 @@ namespace HttpService.Tests
 
             var httpService = new HttpService(httpContextAccessor.Object);
 
-            //Act
-            var client = new HttpClient();
-            await httpService.EnhanceClientAsync(client, false);
+			//Act
+			var msg = await httpService.CreateMessage(HttpMethod.Get, "localhost", false);
 
             //Assert
-            client.DefaultRequestHeaders.GetValues("X-Correlation-Id").Should().HaveCount(1);
-            client.DefaultRequestHeaders.GetValues("X-Correlation-Id").First().Should().Be("someCorrelationId");
-            IEnumerable<string> tokenValues = null;
-            client.DefaultRequestHeaders.TryGetValues("Authorization", out tokenValues).Should().BeFalse();
-        }
+			msg.Headers.GetValues("X-Correlation-Id").Should().HaveCount(1);
+			msg.Headers.GetValues("X-Correlation-Id").First().Should().Be("someCorrelationId");
+			msg.Headers.TryGetValues("Authorization", out IEnumerable<string> tokenValues).Should().BeFalse();
+		}
 
         [Fact]
-        public async void EnhanceClientTest_PassToken_AddsNoAuthHeader()
+        public async void CreateMessageTest_PassToken_AddsNoAuthHeader()
         {
             //Arrange
             var contextReader = new Mock<IContextReader>();
@@ -59,16 +58,14 @@ namespace HttpService.Tests
 
             var httpService = new HttpService(contextReader.Object);
 
-            //Act
-            var client = new HttpClient();
-            await httpService.EnhanceClientAsync(client, true);
+			//Act
+			var msg = await httpService.CreateMessage(HttpMethod.Get, "localhost", true);
 
-            //Assert
-            client.DefaultRequestHeaders.GetValues("X-Correlation-Id").Should().HaveCount(1);
-            client.DefaultRequestHeaders.GetValues("X-Correlation-Id").First().Should().Be("someCorrelationId");
-            IEnumerable<string> tokenValues = null;
-            client.DefaultRequestHeaders.TryGetValues("Authorization", out tokenValues).Should().BeTrue();
-            tokenValues.First().Should().Be("Bearer sometoken");
+			//Assert
+			msg.Headers.GetValues("X-Correlation-Id").Should().HaveCount(1);
+			msg.Headers.GetValues("X-Correlation-Id").First().Should().Be("someCorrelationId");
+			msg.Headers.TryGetValues("Authorization", out IEnumerable<string> tokenValues).Should().BeTrue();
+			tokenValues.First().Should().Be("Bearer sometoken");
         }
 
 
