@@ -35,6 +35,13 @@ namespace HttpService
 
 		private async Task<HttpResponseMessage> SendAsync(HttpMethod method, string requestUri, bool passToken, HttpContent content = null)
 		{
+			HttpRequestMessage msg = await CreateMessage(method, requestUri, passToken, content);
+
+			return await _client.SendAsync(msg);
+		}
+
+		internal async Task<HttpRequestMessage> CreateMessage(HttpMethod method, string requestUri, bool passToken, HttpContent content = null)
+		{
 			var msg = new HttpRequestMessage(method, requestUri);
 
 			msg.Headers.TryAddWithoutValidation("X-Correlation-Id", this._tokenExtractor.GetCorrelationId());
@@ -52,7 +59,7 @@ namespace HttpService
 				msg.Content = content;
 			}
 
-			return await _client.SendAsync(msg);
+			return msg;
 		}
 	}
 
