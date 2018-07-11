@@ -1,15 +1,7 @@
-
-using System;
 using System.Net.Http;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Xunit;
-using Microsoft.AspNetCore.TestHost;
-using HttpService;
 using FluentAssertions;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Authentication;
 using Moq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http.Authentication;
