@@ -120,11 +120,10 @@ namespace HttpService
 		}
 	}
 
+	// This interface and class exists becuause of being able to mock IHttpContextAccessor when testing
 	public interface IContextReader
 	{
 		Task<string> GetTokenAsync();
-
-		string GetCorrelationId();
 	}
 
 	public class HttpContextReader : IContextReader
@@ -134,11 +133,6 @@ namespace HttpService
 		public HttpContextReader(IHttpContextAccessor accessor)
 		{
 			this._accessor = accessor;
-		}
-
-		public string GetCorrelationId()
-		{
-			return this._accessor.HttpContext.TraceIdentifier;
 		}
 
 		public async Task<string> GetTokenAsync()
