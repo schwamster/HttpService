@@ -36,7 +36,7 @@ namespace HttpService
 		}
 
 		/// <summary>
-		/// Perform a HTTP get request with this service.
+		/// Perform a HTTP get request.
 		/// </summary>
 		/// <param name="requestUri">The URI to make the request to.</param>
 		/// <param name="passToken">Indicate if the authorization token used to authorize with in this application should be passed along the request.</param>
@@ -45,7 +45,7 @@ namespace HttpService
 			await SendAsync(HttpMethod.Get, requestUri, passToken);
 
 		/// <summary>
-		/// Perform a HTTP post request with this service.
+		/// Perform a HTTP post request with the specified content.
 		/// </summary>
 		/// <param name="requestUri">The URI to make the request to.</param>
 		/// <param name="content">The content of the request.</param>
@@ -55,7 +55,7 @@ namespace HttpService
 			await SendAsync(HttpMethod.Post, requestUri, passToken, content);
 
 		/// <summary>
-		/// Perform a HTTP Put request with this service.
+		/// Perform a HTTP Put request with the specified content.
 		/// </summary>
 		/// <param name="requestUri">The URI to make the request to.</param>
 		/// <param name="content">The content of the request.</param>
@@ -65,7 +65,7 @@ namespace HttpService
 			await SendAsync(HttpMethod.Put, requestUri, passToken, content);
 
 		/// <summary>
-		/// Perform a HTTP delete request with this service.
+		/// Perform a HTTP delete request.
 		/// </summary>
 		/// <param name="requestUri">The URI to make the request to.</param>
 		/// <param name="passToken">Indicate if the authorization token used to authorize with in this application should be passed along the request.</param>
@@ -74,7 +74,7 @@ namespace HttpService
 			await SendAsync(HttpMethod.Delete, requestUri, passToken);
 
 		/// <summary>
-		/// Perform a HTTP request.
+		/// Perform a HTTP request of the specified method and with the specified content.
 		/// </summary>
 		/// <param name="method">Determines what HTPP method to use for the request. </param>
 		/// <param name="requestUri">The URI to make the request to.</param>
@@ -89,9 +89,9 @@ namespace HttpService
 		}
 
 		/// <summary>
-		/// Creates a HTTP request message.
-		///
-		/// Adds the header <code>X-Correlation-Id</code> to the request. A <code>Authorization</code> header is also added if <code>passToken = true</code>.
+		/// Creates a HTTP request message of the specified method and with the specified content.
+		/// 
+		/// A <code>Authorization</code> header is added if <code>passToken = true</code>.
 		/// </summary>
 		/// <param name="method">Determines what HTTP method to use for the request. </param>
 		/// <param name="requestUri">The URI to make the request to.</param>
