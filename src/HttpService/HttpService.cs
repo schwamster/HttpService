@@ -8,7 +8,6 @@ namespace HttpService
 	/// <summary>
 	/// A service for performing well formed HTTP requests.
 	///
-	/// Adds a correlation ID header to the request from the HTTP context.
 	/// Optionaly correctly passes authorization tokens along.
 	/// </summary>
 	public class HttpService : IHttpService
@@ -94,7 +93,7 @@ namespace HttpService
 		///
 		/// Adds the header <code>X-Correlation-Id</code> to the request. A <code>Authorization</code> header is also added if <code>passToken = true</code>.
 		/// </summary>
-		/// <param name="method">Determines what HTPP method to use for the request. </param>
+		/// <param name="method">Determines what HTTP method to use for the request. </param>
 		/// <param name="requestUri">The URI to make the request to.</param>
 		/// <param name="passToken">Indicate if the authorization token used to authorize with in this application should be passed along the request.</param>
 		/// <param name="content">The content of the request. (Should only be non-null when performing a put or post request.)</param>
@@ -102,8 +101,7 @@ namespace HttpService
 		internal async Task<HttpRequestMessage> CreateMessage(HttpMethod method, string requestUri, bool passToken, HttpContent content = null)
 		{
 			var msg = new HttpRequestMessage(method, requestUri);
-
-			msg.Headers.TryAddWithoutValidation("X-Correlation-Id", this._tokenExtractor.GetCorrelationId());
+			
 			if (passToken)
 			{
 				var token = await _tokenExtractor.GetTokenAsync();
