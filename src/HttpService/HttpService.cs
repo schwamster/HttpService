@@ -120,7 +120,7 @@ namespace HttpService
 		}
 	}
 
-	// This interface and class exists becuause of being able to mock IHttpContextAccessor when testing
+	// This interface and class exists becuause enabling to mock IHttpContextAccessor when testing
 	public interface IContextReader
 	{
 		Task<string> GetTokenAsync();
