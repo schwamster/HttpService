@@ -1,5 +1,6 @@
 using System.Net.Http;
 using System.Threading.Tasks;
+using HttpService.Handlers;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 
@@ -32,7 +33,7 @@ namespace HttpService
 		public HttpService(IContextReader tokenExtractor, HttpClient client = null)
 		{
 			_tokenExtractor = tokenExtractor;
-			_client = client ?? new HttpClient();
+			_client = client ?? new HttpClient(new CorrelationHandler(new HttpClientHandler(), tokenExtractor.GetContextAccessor()));
 		}
 
 		/// <summary>
@@ -124,6 +125,7 @@ namespace HttpService
 	public interface IContextReader
 	{
 		Task<string> GetTokenAsync();
+		IHttpContextAccessor GetContextAccessor();
 	}
 
 	public class HttpContextReader : IContextReader
@@ -133,6 +135,11 @@ namespace HttpService
 		public HttpContextReader(IHttpContextAccessor accessor)
 		{
 			this._accessor = accessor;
+		}
+
+		public IHttpContextAccessor GetContextAccessor()
+		{
+			return _accessor;
 		}
 
 		public async Task<string> GetTokenAsync()
