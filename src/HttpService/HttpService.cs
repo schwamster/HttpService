@@ -26,10 +26,13 @@ namespace HttpService
 		}
 
 		/// <summary>
-		///
+		/// Create a HttpSerivce object.
 		/// </summary>
+		/// <remarks>
+		/// Will by default use a <see cref="CorrelationHandler"/> if no client was specified.
+		/// </remarks>
 		/// <param name="tokenExtractor"></param>
-		/// <param name="client"></param>
+		/// <param name="client">Allowing to dependency inject a custom HttpClient.</param>
 		public HttpService(IContextReader tokenExtractor, HttpClient client = null)
 		{
 			_tokenExtractor = tokenExtractor;
@@ -120,14 +123,19 @@ namespace HttpService
 			return msg;
 		}
 	}
-
-	// This interface and class exists becuause enabling to mock IHttpContextAccessor when testing
+	
+	/// <summary>
+	/// Used togheter with <see cref="HttpContextReader"/> to allow mocking extension methods on <see cref="IHttpContextAccessor"/>.
+	/// </summary>
 	public interface IContextReader
 	{
 		Task<string> GetTokenAsync();
 		IHttpContextAccessor GetContextAccessor();
 	}
 
+	/// <summary>
+	/// Used togheter with <see cref="IContextReader"/> to allow mocking extension methods on <see cref="IHttpContextAccessor"/>.
+	/// </summary>
 	public class HttpContextReader : IContextReader
 	{
 		private readonly IHttpContextAccessor _accessor;
