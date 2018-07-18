@@ -36,7 +36,7 @@ namespace HttpService
 		public HttpService(IContextReader tokenExtractor, HttpClient client = null)
 		{
 			_tokenExtractor = tokenExtractor;
-			_client = client ?? new HttpClient(new CorrelationHandler(new HttpClientHandler(), tokenExtractor.GetContextAccessor()));
+			_client = client ?? new HttpClient(new CorrelationHandler(new HttpClientHandler(), tokenExtractor));
 		}
 
 		/// <summary>
@@ -130,7 +130,7 @@ namespace HttpService
 	public interface IContextReader
 	{
 		Task<string> GetTokenAsync();
-		IHttpContextAccessor GetContextAccessor();
+		string GetCorrelationId();
 	}
 
 	/// <summary>
@@ -145,9 +145,9 @@ namespace HttpService
 			this._accessor = accessor;
 		}
 
-		public IHttpContextAccessor GetContextAccessor()
+		public string GetCorrelationId()
 		{
-			return _accessor;
+			return _accessor.HttpContext.TraceIdentifier;
 		}
 
 		public async Task<string> GetTokenAsync()

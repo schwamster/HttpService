@@ -12,16 +12,19 @@ namespace HttpService.Handlers
 	/// </summary>
 	public class CorrelationHandler : DelegatingHandler
 	{
-		private readonly IHttpContextAccessor _accessor;
+		private readonly IContextReader _tokenExtractor;
 
-		public CorrelationHandler(HttpMessageHandler innerHandler, IHttpContextAccessor accessor) : base(innerHandler)
+		public CorrelationHandler(HttpMessageHandler innerHandler, IHttpContextAccessor accessor) : this(innerHandler, new HttpContextReader(accessor))
+		{ }
+
+		public CorrelationHandler(HttpMessageHandler innerHandler, IContextReader tokenExtractor) : base(innerHandler)
 		{
-			_accessor = accessor;
+			_tokenExtractor = tokenExtractor;
 		}
 
 		protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
 		{
-			request.Headers.TryAddWithoutValidation("X-Correlation-Id", this._accessor.HttpContext.TraceIdentifier);
+			request.Headers.TryAddWithoutValidation("X-Correlation-Id", _tokenExtractor.GetCorrelationId());
 			return await base.SendAsync(request, cancellationToken);
 		}
 	}
