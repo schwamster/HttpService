@@ -1,77 +1,100 @@
-
-using System;
-using System.Net.Http;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Xunit;
-using Microsoft.AspNetCore.TestHost;
-using HttpService;
-using FluentAssertions;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Authentication;
-using Moq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http.Authentication;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
+using FluentAssertions;
+using HttpService.Handlers;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Authentication;
+using Moq;
+using Xunit;
 
 namespace HttpService.Tests
 {
-   public class Tests
+	public class Tests
    {
+		
+		[Fact]
+		public async void SendGetMessagePassingTokenTest()
+		{
+			//Arrange
+			var testHandler = new TestHandler();
+			var extractor = new Mock<IContextReader>();
+			extractor.Setup(x => x.GetTokenAsync()).Returns(Task.FromResult("sometoken"));
 
-        [Fact]
-        public async void EnhanceClientTest_DontPassToken_AddsCorrelationId()
-        {
-            //Arrange
-            var httpContext = new Mock<HttpContext>();
-            var authentication = new Mock<AuthenticationManager>();
+			var service = new HttpService(extractor.Object, new HttpClient(testHandler));
 
-            httpContext.Setup(x => x.Authentication).Returns(authentication.Object);
-            httpContext.Setup(x => x.TraceIdentifier).Returns("someCorrelationId");
+			//Act
+			service.GetAsync("http://example.com", true);
 
-            var httpContextAccessor = new Mock<IHttpContextAccessor>();
-            httpContextAccessor
-                .Setup(x => x.HttpContext)
-                .Returns(httpContext.Object);
+			//Assert
+			{   //Assert msg is using get
+				testHandler.Request.Method.Method.Should().Be(HttpMethod.Get.Method);
+			}
+			{   //Assert auth token was passeed
+				testHandler.Request.Headers.TryGetValues("Authorization", out IEnumerable<string> tokenValues).Should().BeTrue();
+				tokenValues.Any(tokenValue => tokenValue == "Bearer sometoken").Should().BeTrue();
+			}
+		}
 
-            var httpService = new HttpService(httpContextAccessor.Object);
+		[Fact]
+		public async void SendGetMessageNotPassingTokenTest()
+		{
+			//Arrange
+			var testHandler = new TestHandler();
+			var extractor = new Mock<IContextReader>();
+			extractor.Setup(x => x.GetTokenAsync()).Returns(Task.FromResult("sometoken"));
 
-            //Act
-            var client = new HttpClient();
-            await httpService.EnhanceClientAsync(client, false);
+			var service = new HttpService(extractor.Object, new HttpClient(testHandler));
 
-            //Assert
-            client.DefaultRequestHeaders.GetValues("X-Correlation-Id").Should().HaveCount(1);
-            client.DefaultRequestHeaders.GetValues("X-Correlation-Id").First().Should().Be("someCorrelationId");
-            IEnumerable<string> tokenValues = null;
-            client.DefaultRequestHeaders.TryGetValues("Authorization", out tokenValues).Should().BeFalse();
-        }
+			//Act
+			service.GetAsync("http://example.com", false);
 
-        [Fact]
-        public async void EnhanceClientTest_PassToken_AddsNoAuthHeader()
-        {
-            //Arrange
-            var contextReader = new Mock<IContextReader>();
-            contextReader.Setup(x => x.GetTokenAsync()).Returns(() => Task.FromResult("sometoken"));
-            contextReader.Setup(x => x.GetCorrelationId()).Returns("someCorrelationId");
+			//Assert
+			{   //Assert msg is using get
+				testHandler.Request.Method.Method.Should().Be(HttpMethod.Get.Method);
+			}
+			{   //Assert auth token was passeed
+				testHandler.Request.Headers.TryGetValues("Authorization", out IEnumerable<string> tokenValues).Should().BeFalse();
+			}
+		}
 
-            var httpService = new HttpService(contextReader.Object);
+		[Fact]
+		public async void AddTraceHeaderTest()
+		{
+			//Arrange
+			var testHandler = new TestHandler();
+			var accessor = new Mock<IHttpContextAccessor>();
+			accessor.Setup(x => x.HttpContext.TraceIdentifier).Returns("someCorrelationId");
 
-            //Act
-            var client = new HttpClient();
-            await httpService.EnhanceClientAsync(client, true);
+			var client = new HttpClient(new CorrelationHandler(testHandler, accessor.Object));
 
-            //Assert
-            client.DefaultRequestHeaders.GetValues("X-Correlation-Id").Should().HaveCount(1);
-            client.DefaultRequestHeaders.GetValues("X-Correlation-Id").First().Should().Be("someCorrelationId");
-            IEnumerable<string> tokenValues = null;
-            client.DefaultRequestHeaders.TryGetValues("Authorization", out tokenValues).Should().BeTrue();
-            tokenValues.First().Should().Be("Bearer sometoken");
-        }
+			//Act
+			await client.SendAsync(new HttpRequestMessage(HttpMethod.Get, "http://example.com"));
+
+			//Assert
+			testHandler.Request.Headers.TryGetValues("X-Correlation-Id", out IEnumerable<string> tokenValues).Should().BeTrue();
+			tokenValues.Should().Contain("someCorrelationId");
+		}
+	}
+
+	public class TestHandler : HttpMessageHandler
+	{
+		public TestHandler()
+		{
+		}
+
+		public HttpRequestMessage Request { get; set; }
+
+		protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+		{
+			Request = request;
+			return await Task.FromResult(new HttpResponseMessage());
+		}
 
 
-    }
+	}
 }
 
