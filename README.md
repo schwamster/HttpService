@@ -45,9 +45,9 @@ Edit your Service:
                         this.httpService = httpService;
                 }
 
-                public string SomeMethod()
+                public async Task<HttpResponseMessage> SomeMethod()
                 {
-                        return this.httpService.GetAsync("http://someurl.com", true);
+                        return await this.httpService.GetAsync("http://someurl.com", true);
                 }
         }
 
