@@ -77,6 +77,16 @@ namespace HttpService
 		public async Task<HttpResponseMessage> DeleteAsync(string requestUri, bool passToken) =>
 			await SendAsync(HttpMethod.Delete, requestUri, passToken);
 
+        /// <summary>
+        /// Perform a HTTP delete request.
+        /// </summary>
+        /// <param name="requestUri">The URI to make the request to.</param>
+        /// <param name="content">The content of the request.</param>
+		/// <param name="passToken">Indicate if the authorization token used to authorize with in this application should be passed along the request.</param>
+        /// <returns>The response of the request.</returns>
+        public async Task<HttpResponseMessage> DeleteAsync(string requestUri, HttpContent content, bool passToken) =>
+			await SendAsync(HttpMethod.Delete, requestUri, passToken, content);
+
 		/// <summary>
 		/// Perform a HTTP request of the specified method and with the specified content.
 		/// </summary>

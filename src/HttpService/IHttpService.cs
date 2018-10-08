@@ -9,5 +9,6 @@ namespace HttpService
         Task<HttpResponseMessage> PostAsync(string requestUri, HttpContent content,  bool passToken);
         Task<HttpResponseMessage> PutAsync(string requestUri, HttpContent content,  bool passToken);
         Task<HttpResponseMessage> DeleteAsync(string requestUri, bool passToken);
+        Task<HttpResponseMessage> DeleteAsync(string requestUri, HttpContent content, bool passToken);
     }
 }
